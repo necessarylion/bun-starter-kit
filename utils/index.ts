@@ -3,7 +3,7 @@ import Container from "typedi"
 
 type Constructor<T> = new (...args: any[]) => T
 
-export function C<T>(
+export function Controller<T>(
 	controller: Constructor<T>,
 	func: keyof T,
 ): (c: Context) => Promise<Response> {

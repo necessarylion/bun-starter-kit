@@ -1,10 +1,10 @@
 import { Hono } from "hono"
 import UserController from "@/app/modules/user/user.controller"
-import { C } from "@/utils"
+import { Controller } from "@/utils"
 
 const route = new Hono().basePath("/api")
 
-route.get("/users", C(UserController, "getUsers"))
-route.post("/users", C(UserController, "createUser"))
+route.get("/users", Controller(UserController, "getUsers"))
+route.post("/users", Controller(UserController, "createUser"))
 
 export default route

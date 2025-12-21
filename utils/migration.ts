@@ -7,7 +7,7 @@ import config from "@/knexfile"
 export const db = knex(config)
 
 export async function runMigration() {
-	if (env.APP_ENV === "production") {
+	if (env.NODE_ENV === "production") {
 		try {
 			logger.info("Running database migrations...")
 			await db.migrate.latest()

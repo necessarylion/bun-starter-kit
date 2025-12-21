@@ -1,0 +1,31 @@
+{
+	"name": "hono",
+	"version": "1.0.0",
+	"scripts": {
+		"dev": "bun run --hot server.ts",
+		"format": "biome format --write",
+		"lint": "biome check --fix",
+		"migration:run": "bunx --bun knex migrate:latest",
+		"migration:rollback": "bunx --bun knex migrate:rollback",
+		"migration:create": "bunx --bun knex migrate:make -x ts",
+		"build:prod": "bun build ./server.ts --outfile=server --compile --minify -e oracledb -e pg -e sqlite3 -e mysql -e pg-query-stream -e better-sqlite3 -e tedious -e @libsql/sqlite3"
+	},
+	"dependencies": {
+		"@adonisjs/lucid": "^21.8.1",
+		"@sentry/bun": "^10.32.1",
+		"@types/luxon": "^3.7.1",
+		"@vinejs/vine": "^4.2.0",
+		"hono": "^4.11.1",
+		"knex": "^2.5.1",
+		"loadash": "^1.0.0",
+		"luxon": "^3.7.2",
+		"mysql2": "^3.3.1",
+		"reflect-metadata": "^0.2.2",
+		"typedi": "^0.10.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.3.10",
+		"@types/bun": "latest",
+		"@types/lodash": "^4.17.21"
+	}
+}

@@ -1,3 +1,7 @@
+/**
+ * references from
+ * https://github.com/adonisjs/lucid/issues/493
+ */
 import { EventEmitter } from "node:events"
 import { Logger } from "@adonisjs/logger"
 import { Database } from "@adonisjs/lucid/database"

@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
 		table.string("email").notNullable().unique()
 		table.string("name")
 		table.string("password").notNullable()
+		table.string("avatar").nullable()
 		table.timestamp("updated_at").nullable()
 		table.timestamp("created_at").defaultTo(knex.fn.now())
 	})

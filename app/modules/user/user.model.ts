@@ -17,6 +17,9 @@ export default class User extends Model {
 	@column()
 	declare password: string
 
+	@column()
+	declare avatar: string
+
 	@column.dateTime()
 	declare createdAt: DateTime
 

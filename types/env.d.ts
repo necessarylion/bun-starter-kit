@@ -5,6 +5,7 @@ declare global {
 			DATABASE_URL?: string
 			SENTRY_DSN?: string
 			SENTRY_TRACES_SAMPLE_RATE?: number
+			DRIVE_DISK: "fs"
 		}
 	}
 }

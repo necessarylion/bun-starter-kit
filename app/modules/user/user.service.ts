@@ -1,7 +1,7 @@
 import { Infer } from "@vinejs/vine/types"
 import { randomUUIDv7 } from "bun"
 import { Service } from "typedi"
-import { disk } from "@/config/drive"
+import { disk } from "@/utils/disk"
 import User from "./user.model"
 import { userCreateValidator } from "./user.validator"
 

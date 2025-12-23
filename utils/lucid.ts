@@ -1,7 +1,6 @@
 import { EventEmitter } from "node:events"
 import { Logger } from "@adonisjs/logger"
 import { Database } from "@adonisjs/lucid/database"
-import { FactoryManager } from "@adonisjs/lucid/factories"
 import {
 	Adapter,
 	BaseModel,
@@ -23,8 +22,6 @@ class DefaultNamingStrategy extends SnakeCaseNamingStrategy {
 
 export class Lucid {
 	public db: Database
-
-	public Factory = new FactoryManager()
 
 	public Model: typeof BaseModel
 

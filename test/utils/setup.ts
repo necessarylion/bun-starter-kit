@@ -1,10 +1,12 @@
 import { afterAll, afterEach, beforeAll, beforeEach } from "bun:test"
+import server from "@/server"
 import { lucid } from "@/utils/lucid"
-import { runMigration } from "@/utils/migration"
 
-beforeAll(async () => {
-	// Run migrations before all tests
-	await runMigration()
+let testServer: ReturnType<typeof Bun.serve> | null = null
+
+beforeAll(() => {
+	// Start test server
+	testServer = Bun.serve(server)
 })
 
 beforeEach(async () => {
@@ -18,6 +20,10 @@ afterEach(async () => {
 })
 
 afterAll(async () => {
+	// Stop test server
+	if (testServer) {
+		testServer.stop()
+	}
 	// Close database connection
 	await lucid.db.manager.closeAll()
 })

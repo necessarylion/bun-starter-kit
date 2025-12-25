@@ -179,24 +179,31 @@ describe("My API", () => {
   test("should return data", async () => {
     const response = await http.get("/api/endpoint")
     expect(response.status).toBe(200)
+    expect(response.data).toHaveProperty("id")
+  })
+
+  test("should handle errors", async () => {
+    const response = await http.post("/api/endpoint", { invalid: "data" })
+    expect(response.status).toBe(422)
+    expect(response.data).toHaveProperty("errors")
   })
 })
 ```
 
 ### Test Utilities
 
-- **HttpClient** (`http`): Make HTTP requests to the app
-  - `http.get(path, headers?)`
-  - `http.post(path, body?, headers?)`
-  - `http.postForm(path, formData, headers?)`
-  - `http.put/patch/delete(...)`
+- **HttpClient** (`http`): Standard axios instance
+  - Makes real HTTP requests to test server on port 3333
+  - Standard axios API: `http.get()`, `http.post()`, etc.
+  - Responses have `data` and `status` properties
+  - Configured to not throw on non-2xx status codes
 
 - **Factories**: Create test data
   - `createUserData(overrides?)` - Generate user data
   - `createImageFile(filename?)` - Create test image file
   - `createFormData(data)` - Convert object to FormData
 
-- **Database Setup**: Automatic transaction rollback after each test
+- **Test Server**: Bun server running your Hono app on port 3333
 
 See `test/README.md` for detailed testing guide.
 

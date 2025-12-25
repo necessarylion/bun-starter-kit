@@ -48,8 +48,7 @@ describe("My API", () => {
     const response = await http.get("/api/endpoint")
 
     expect(response.status).toBe(200)
-    const data = await response.json()
-    expect(data).toHaveProperty("id")
+    expect(response.data).toHaveProperty("id")
   })
 })
 ```
@@ -68,8 +67,9 @@ test("should create user", async () => {
     avatar,
   })
 
-  const response = await http.postForm("/api/users", formData)
+  const response = await http.post("/api/users", formData)
   expect(response.status).toBe(200)
+  expect(response.data).toHaveProperty("id")
 })
 ```
 
@@ -77,28 +77,29 @@ test("should create user", async () => {
 
 ```typescript
 test("should return 422 for invalid data", async () => {
-  const response = await http.post("/api/users", {
-    email: "invalid-email"
-  })
+  const formData = createFormData({ email: "invalid-email" })
+  const response = await http.post("/api/users", formData)
 
   expect(response.status).toBe(422)
-  const data = await response.json()
-  expect(data).toHaveProperty("errors")
+  expect(response.data).toHaveProperty("errors")
 })
 ```
 
 ## Test Utilities
 
-### HttpClient
+### HttpClient (Axios)
 
-The `http` client provides methods for making HTTP requests to the app:
+The `http` client is a standard axios instance that makes requests to a test server running on port 3333:
 
-- `http.get(path, headers?)`
-- `http.post(path, body?, headers?)`
-- `http.postForm(path, formData, headers?)`
-- `http.put(path, body?, headers?)`
-- `http.patch(path, body?, headers?)`
-- `http.delete(path, headers?)`
+- `http.get(url, config?)`
+- `http.post(url, data?, config?)`
+- `http.put(url, data?, config?)`
+- `http.patch(url, data?, config?)`
+- `http.delete(url, config?)`
+
+**Response format:** Axios responses have a `data` property containing the parsed response body, and a `status` property for the HTTP status code.
+
+**Error handling:** Configured with `validateStatus: () => true` so it doesn't throw errors. Tests manually check `response.status`.
 
 ### Factories
 
@@ -108,21 +109,22 @@ Helper functions for creating test data:
 - `createImageFile(filename?)` - Create a test image file
 - `createFormData(data)` - Convert object to FormData
 
-### Database Transactions
+### Test Server
 
-Tests automatically run inside database transactions that are rolled back after each test, ensuring test isolation. Migrations are run automatically before tests start.
+A Bun HTTP server starts on port 3333 before tests run and stops after all tests complete. The server runs your actual Hono app, so tests make real HTTP requests.
 
 ```typescript
-import "../utils/setup"  // This enables automatic transaction handling and runs migrations
+import "../utils/setup"  // This starts the test server and runs migrations
 ```
 
-**Note:** Tests use SQLite (configured in `.env.test`) while development uses MySQL (configured in `.env`). This separation ensures tests are fast and don't interfere with your development database.
+**Note:** Tests use SQLite (configured in `.env.test`) while development uses MySQL (configured in `.env`). The test database is cleaned up after all tests finish.
 
 ## Best Practices
 
-1. Always import the setup file to enable database transaction rollback
+1. Always import the setup file to start the test server
 2. Use factories to create test data instead of hardcoding values
 3. Test both success and error cases
 4. Test validation errors for all required fields
 5. Use descriptive test names that explain what is being tested
 6. Group related tests using `describe` blocks
+7. Remember that tests make real HTTP requests to a running server

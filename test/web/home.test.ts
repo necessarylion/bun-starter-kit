@@ -8,9 +8,7 @@ describe("Web Routes", () => {
 			const response = await http.get("/")
 
 			expect(response.status).toBe(200)
-
-			const text = await response.text()
-			expect(text).toBeTruthy()
+			expect(response.data).toBeTruthy()
 		})
 	})
 })

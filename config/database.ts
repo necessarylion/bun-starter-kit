@@ -3,9 +3,9 @@ import { defineConfig } from "@adonisjs/lucid"
 import config from "@/knexfile"
 
 export default defineConfig({
-	connection: "mysql",
+	connection: "database",
 	connections: {
-		mysql: {
+		database: {
 			...config,
 			debug: false,
 		},

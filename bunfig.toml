@@ -1,0 +1,5 @@
+[test]
+# Preload test setup
+preload = ["./test/utils/setup.ts"]
+# Load test environment variables
+envFile = ".env.test"

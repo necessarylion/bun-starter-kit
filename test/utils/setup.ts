@@ -1,12 +1,17 @@
 import { afterAll, afterEach, beforeAll, beforeEach } from "bun:test"
 import server from "@/server"
 import { lucid } from "@/utils/lucid"
+import { TEST_CONFIG } from "./config"
 
 let testServer: ReturnType<typeof Bun.serve> | null = null
 
 beforeAll(() => {
-	// Start test server
-	testServer = Bun.serve(server)
+	// Start test server on configured port
+	testServer = Bun.serve({
+		...server,
+		port: TEST_CONFIG.PORT,
+	})
+	console.log(`Test server started on port ${TEST_CONFIG.PORT}`)
 })
 
 beforeEach(async () => {

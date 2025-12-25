@@ -1,7 +1,15 @@
 import axios from "axios"
+import { TEST_CONFIG } from "./config"
 
-// Simple axios instance - the server will be started in setup.ts
+/**
+ * HTTP client for making test requests
+ * Configured to not throw on non-2xx status codes
+ */
 export const http = axios.create({
-	baseURL: "http://localhost:3001",
+	baseURL: TEST_CONFIG.BASE_URL,
+	timeout: TEST_CONFIG.REQUEST_TIMEOUT,
 	validateStatus: () => true, // Don't throw on any status code
+	headers: {
+		Accept: "application/json",
+	},
 })

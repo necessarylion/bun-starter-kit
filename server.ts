@@ -21,4 +21,7 @@ app.route("/", web)
 app.route("/", api)
 app.onError(errorHandler)
 
-export default app
+export default {
+	port: env.PORT || 3000,
+	fetch: app.fetch,
+}

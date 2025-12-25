@@ -12,6 +12,10 @@ bun run dev                    # Start dev server with hot reload on :3000
 bun run format                 # Format code with Biome
 bun run lint                   # Lint and auto-fix with Biome
 
+# Testing
+bun run test                   # Run all tests
+bun run test:watch             # Run tests in watch mode
+
 # Database Migrations
 bun run migration:run          # Apply all pending migrations
 bun run migration:rollback     # Rollback last migration batch
@@ -152,6 +156,56 @@ Follow the pattern in existing migrations:
 - Define foreign keys with `.onDelete()` behavior
 - Include `created_at` and `updated_at` timestamps
 - Implement both `up()` and `down()` functions
+
+## Testing
+
+### Test Structure
+
+Tests are located in the `test/` directory with the following structure:
+- `test/api/` - API endpoint tests
+- `test/web/` - Web route tests
+- `test/utils/` - Test utilities and helpers
+
+**Database:** Tests use SQLite (`.env.test`) for fast, isolated testing. Development uses MySQL (`.env`). The test database (`test.db`) is automatically created and cleaned up.
+
+### Writing Tests
+
+```typescript
+import { describe, expect, test } from "bun:test"
+import { http } from "../utils/http-client"
+import "../utils/setup"  // Enables automatic database transaction rollback
+
+describe("My API", () => {
+  test("should return data", async () => {
+    const response = await http.get("/api/endpoint")
+    expect(response.status).toBe(200)
+    expect(response.data).toHaveProperty("id")
+  })
+
+  test("should handle errors", async () => {
+    const response = await http.post("/api/endpoint", { invalid: "data" })
+    expect(response.status).toBe(422)
+    expect(response.data).toHaveProperty("errors")
+  })
+})
+```
+
+### Test Utilities
+
+- **HttpClient** (`http`): Standard axios instance
+  - Makes real HTTP requests to test server on port 3333
+  - Standard axios API: `http.get()`, `http.post()`, etc.
+  - Responses have `data` and `status` properties
+  - Configured to not throw on non-2xx status codes
+
+- **Factories**: Create test data
+  - `createUserData(overrides?)` - Generate user data
+  - `createImageFile(filename?)` - Create test image file
+  - `createFormData(data)` - Convert object to FormData
+
+- **Test Server**: Bun server running your Hono app on port 3333
+
+See `test/README.md` for detailed testing guide.
 
 ## Environment Variables
 

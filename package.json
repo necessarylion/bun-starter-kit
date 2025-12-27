@@ -9,7 +9,7 @@
 		"migration:run": "bunx --bun knex migrate:latest",
 		"migration:rollback": "bunx --bun knex migrate:rollback",
 		"migration:create": "bunx --bun knex migrate:make -x ts",
-		"build:prod": "bun build ./server.ts --outfile=server --compile --minify -e oracledb -e pg -e sqlite3 -e mysql -e pg-query-stream -e better-sqlite3 -e tedious -e @libsql/sqlite3",
+		"build:prod": "bun build ./server.ts --outfile=build/server --compile --minify -e oracledb -e pg -e sqlite3 -e mysql -e pg-query-stream -e better-sqlite3 -e tedious -e @libsql/sqlite3",
 		"test": "bun test",
 		"test:watch": "bun test --watch"
 	},

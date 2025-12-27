@@ -5,23 +5,12 @@
 import { EventEmitter } from "node:events"
 import { Logger } from "@adonisjs/logger"
 import { Database } from "@adonisjs/lucid/database"
-import {
-	Adapter,
-	BaseModel,
-	SnakeCaseNamingStrategy,
-} from "@adonisjs/lucid/orm"
+import { Adapter, BaseModel } from "@adonisjs/lucid/orm"
 import { DatabaseConfig } from "@adonisjs/lucid/types/database"
-import { snakeCase } from "lodash"
 import databaseConfig from "@/config/database"
 
 class SimpleEventEmitter extends EventEmitter {
 	hasListeners = (eventName: string) => this.listenerCount(eventName) > 0
-}
-
-class DefaultNamingStrategy extends SnakeCaseNamingStrategy {
-	serializedName(_model: typeof BaseModel, propertyName: string) {
-		return snakeCase(propertyName)
-	}
 }
 
 export class Lucid {
@@ -42,7 +31,6 @@ export class Lucid {
 
 	protected setupModel(): typeof BaseModel {
 		BaseModel.$adapter = new Adapter(this.db)
-		BaseModel.namingStrategy = new DefaultNamingStrategy()
 		return BaseModel
 	}
 }

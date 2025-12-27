@@ -14,21 +14,27 @@ export default class User extends Model {
 	@column()
 	name!: string
 
+	@ApiProperty({ example: "john.doe@example.com" })
 	@column()
 	email!: string
 
+	@ApiProperty({ example: "securePassword123" })
 	@column()
 	password!: string
 
+	@ApiProperty({ example: "https://example.com/avatar.jpg" })
 	@column()
 	avatar!: string
 
+	@ApiProperty({ example: "2024-01-01T12:00:00Z" })
 	@column.dateTime()
 	createdAt!: DateTime
 
+	@ApiProperty({ example: "2024-01-02T12:00:00Z" })
 	@column.dateTime()
 	updatedAt!: DateTime | null
 
+	@ApiProperty({ type: () => [Post] })
 	@hasMany(() => Post)
 	posts!: HasMany<typeof Post>
 }

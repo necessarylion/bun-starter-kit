@@ -1,31 +1,34 @@
 import { column, hasMany } from "@adonisjs/lucid/orm"
 import type { HasMany } from "@adonisjs/lucid/types/relations"
 import { DateTime } from "luxon"
+import { ApiProperty } from "openapi-metadata/decorators"
 import { Model } from "@/utils/lucid"
 import Post from "../post/post.model"
 
 export default class User extends Model {
+	@ApiProperty()
 	@column({ isPrimary: true })
-	declare id: number
+	id!: number
+
+	@ApiProperty({ example: "John Doe" })
+	@column()
+	name!: string
 
 	@column()
-	declare name: string
+	email!: string
 
 	@column()
-	declare email: string
+	password!: string
 
 	@column()
-	declare password: string
-
-	@column()
-	declare avatar: string
+	avatar!: string
 
 	@column.dateTime()
-	declare createdAt: DateTime
+	createdAt!: DateTime
 
 	@column.dateTime()
-	declare updatedAt: DateTime | null
+	updatedAt!: DateTime | null
 
 	@hasMany(() => Post)
-	declare posts: HasMany<typeof Post>
+	posts!: HasMany<typeof Post>
 }

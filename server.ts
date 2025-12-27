@@ -1,5 +1,6 @@
 import "reflect-metadata"
 import "@/utils/sentry"
+import "@/utils/vine/example"
 import { logger } from "@sentry/bun"
 import { env } from "bun"
 import { Hono } from "hono"

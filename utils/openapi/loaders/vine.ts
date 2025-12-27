@@ -34,6 +34,7 @@ export function parseValidations(
 
 		if (rule.options.min) {
 			schema.minimum = rule.options.min
+			schema.example = rule.options.min
 		}
 
 		if (rule.options.max) {
@@ -45,7 +46,15 @@ export function parseValidations(
 			schema.pattern = rule.options.toString()
 		}
 
-		// TODO: Choices
+		if (rule.options.choices) {
+			schema.enum = rule.options.choices
+			schema.example =
+				rule.options.choices.length > 0 ? rule.options.choices[0] : undefined
+		}
+
+		if (rule.options.example) {
+			schema.example = rule.options.example
+		}
 	}
 
 	return schema

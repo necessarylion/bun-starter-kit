@@ -11,6 +11,5 @@ export const userCreateValidator = vine.create(
 			.maxLength(32)
 			.confirmed(),
 		avatar: vine.nativeFile().mimeTypes(["image/jpeg", "image/png"]),
-		status: vine.enum(["active", "inactive", "banned"] as const),
 	}),
 )

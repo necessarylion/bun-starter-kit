@@ -5,6 +5,7 @@ import { env } from "bun"
 import { Hono } from "hono"
 import errorHandler from "@/app/error-handler"
 import api from "@/routes/api"
+import openapi from "@/routes/openapi"
 import web from "@/routes/web"
 import { vineValidation } from "./app/middleware/vine_validation_middleware"
 import { version } from "./package.json"
@@ -19,6 +20,7 @@ const app = new Hono()
 app.use(vineValidation)
 app.route("/", web)
 app.route("/", api)
+app.route("/", openapi)
 app.onError(errorHandler)
 
 export default {

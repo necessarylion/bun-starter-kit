@@ -1,23 +1,30 @@
 import { column } from "@adonisjs/lucid/orm"
 import { DateTime } from "luxon"
+import { ApiProperty } from "openapi-metadata/decorators"
 import { Model } from "@/utils/lucid"
 
 export default class Post extends Model {
+	@ApiProperty()
 	@column({ isPrimary: true })
-	declare id: number
+	id!: number
 
+	@ApiProperty({ example: "My First Post" })
 	@column()
-	declare title: string
+	title!: string
 
+	@ApiProperty({ example: "This is the content of my first post." })
 	@column()
-	declare content: string
+	content!: string
 
+	@ApiProperty({ example: 1 })
 	@column()
-	declare userId: number
+	userId!: number
 
+	@ApiProperty({ example: "2024-01-01T12:00:00Z" })
 	@column.dateTime()
-	declare createdAt: DateTime
+	createdAt!: DateTime
 
+	@ApiProperty({ example: "2024-01-02T12:00:00Z" })
 	@column.dateTime()
-	declare updatedAt: DateTime | null
+	updatedAt!: DateTime | null
 }

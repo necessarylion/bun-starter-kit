@@ -2,7 +2,7 @@
 node_modules/
 
 .env
-build/
+compiled-server
 storage/
 
 # test database

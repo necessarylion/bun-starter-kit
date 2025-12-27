@@ -18,11 +18,11 @@ RUN bun install && bun build:prod
 
 FROM debian:12-slim
 WORKDIR /app
-COPY --from=builder /app/build/server /app/server
+COPY --from=builder /app/compiled-server /app/server
 COPY --from=builder /app/migrations /app/migrations
 
 # set env
 ENV NODE_ENV=production
 EXPOSE 3000
 # Run the standalone binary
-CMD ["/app/server"]
+CMD ["/app/compiled-server"]

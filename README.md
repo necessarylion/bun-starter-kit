@@ -1,6 +1,6 @@
 # Bun Starter Kit
 
-A modern, type-safe web application starter kit built with **Hono**, **Bun**, **Lucid ORM**, **Knex Migrations**, **Vine Validator**, and **Typedi** for automatic dependency injection.
+A modern, type-safe web application starter kit built with **Hono**, **Bun**, **Lucid ORM**, **Knex Migrations**, **Vine Validator**, **Flydrive**, and **Typedi** for automatic dependency injection.
 
 ## 🚀 Tech Stack
 
@@ -10,6 +10,7 @@ A modern, type-safe web application starter kit built with **Hono**, **Bun**, **
 - **[Knex.js](https://knexjs.org/)** - SQL query builder and migration tool
 - **[Vine Validator](https://vinejs.dev/)** - Schema-based validation library
 - **[Typedi](https://github.com/typestack/typedi)** - Dependency injection container
+- **[Flydrive](https://flydrive.dev/)** - Unified file storage library
 
 ## 📋 Prerequisites
 
@@ -34,6 +35,7 @@ Create a `.env` file in the root directory:
 ```env
 APP_ENV=development
 DATABASE_URL=mysql://hono:hono@localhost:3307/hono
+DRIVE_DISK=fs
 SENTRY_DSN=your_sentry_dsn_here
 SENTRY_TRACES_SAMPLE_RATE=1.0
 ```
@@ -105,6 +107,64 @@ export async function down(knex: Knex): Promise<void> {
 
 In production (`APP_ENV=production`), migrations run automatically when the server starts via the `runMigration()` function in `utils/migration.ts`.
 
+## 📦 File Storage
+
+This project uses **Flydrive** for unified file storage across different drivers.
+
+### Configuration
+
+File storage is configured in [config/drive.ts](config/drive.ts). The active driver is selected via the `DRIVE_DISK` environment variable.
+
+### Available Drivers
+
+- **fs** - Local file system driver (stores files in `storage/` directory)
+
+### Usage
+
+Import the disk instance from `utils/disk.ts`:
+
+```typescript
+import { disk } from "@/utils/disk"
+
+// Write a file
+await disk.put("path/to/file.txt", "content")
+
+// Read a file
+const content = await disk.get("path/to/file.txt")
+
+// Delete a file
+await disk.delete("path/to/file.txt")
+
+// Check if file exists
+const exists = await disk.exists("path/to/file.txt")
+
+// Get file URL
+const url = await disk.getUrl("path/to/file.txt")
+```
+
+### Adding New Drivers
+
+To add additional drivers (S3, GCS, etc.):
+
+1. Install the driver package:
+
+```bash
+bun add @flydrive/s3
+```
+
+2. Add configuration in [config/drive.ts](config/drive.ts):
+
+```typescript
+import { S3Driver } from "@flydrive/s3"
+
+export default {
+  fs: () => new FSDriver({ /* ... */ }),
+  s3: () => new S3Driver({ /* ... */ }),
+}
+```
+
+3. Update `DRIVE_DISK` environment variable to use the new driver.
+
 ## 🏃 Development
 
 ### Start Development Server
@@ -150,9 +210,11 @@ bun-starter-kit/
 │   │       └── user.validator.ts
 │   └── error-handler.ts     # Global error handler
 ├── config/
-│   └── database.ts          # Lucid database configuration
+│   ├── database.ts          # Lucid database configuration
+│   └── drive.ts             # Flydrive storage configuration
 ├── migrations/              # Knex migration files
 │   └── 20251220144756_init.ts
+├── storage/                 # File storage directory (fs driver)
 ├── routes/                  # Route definitions
 │   ├── api.ts
 │   └── web.ts
@@ -160,6 +222,7 @@ bun-starter-kit/
 │   ├── env.d.ts
 │   └── hono.d.ts
 ├── utils/                   # Utility functions
+│   ├── disk.ts             # Flydrive disk instance
 │   ├── index.ts
 │   ├── lucid.ts
 │   ├── migration.ts        # Migration runner
@@ -195,10 +258,15 @@ docker-compose logs -f db
 ### Database Configuration
 
 Database connection is configured in:
-- `knexfile.ts` - Knex configuration (used for migrations)
-- `config/database.ts` - Lucid ORM configuration
+
+- [knexfile.ts](knexfile.ts) - Knex configuration (used for migrations)
+- [config/database.ts](config/database.ts) - Lucid ORM configuration
 
 Both use the `DATABASE_URL` environment variable.
+
+### File Storage Configuration
+
+File storage is configured in [config/drive.ts](config/drive.ts) using the `DRIVE_DISK` environment variable to select the active driver.
 
 ### Environment Variables
 
@@ -206,6 +274,7 @@ Both use the `DATABASE_URL` environment variable.
 |----------|-------------|---------|
 | `APP_ENV` | Application environment (`development`, `production`) | - |
 | `DATABASE_URL` | MySQL connection string | - |
+| `DRIVE_DISK` | Flydrive storage driver (`fs`, `s3`, etc.) | `fs` |
 | `SENTRY_DSN` | Sentry error tracking DSN | - |
 | `SENTRY_TRACES_SAMPLE_RATE` | Sentry performance sampling rate | `1.0` |
 
@@ -217,6 +286,7 @@ Both use the `DATABASE_URL` environment variable.
 - ✅ **Migrations** - Knex migrations for database schema management
 - ✅ **Validation** - Vine Validator for request validation
 - ✅ **Dependency Injection** - Typedi for automatic DI
+- ✅ **File Storage** - Flydrive for unified file storage
 - ✅ **Error Tracking** - Sentry integration
 - ✅ **Code Quality** - Biome for formatting and linting
 
@@ -236,6 +306,7 @@ Both use the `DATABASE_URL` environment variable.
 - [Knex.js Documentation](https://knexjs.org/)
 - [Vine Validator Documentation](https://vinejs.dev/)
 - [Typedi Documentation](https://github.com/typestack/typedi)
+- [Flydrive Documentation](https://flydrive.dev/)
 
 ## 📄 License
 

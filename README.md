@@ -11,6 +11,7 @@ A modern, type-safe web application starter kit built with **Hono**, **Bun**, **
 - **[Vine Validator](https://vinejs.dev/)** - Schema-based validation library
 - **[Typedi](https://github.com/typestack/typedi)** - Dependency injection container
 - **[Flydrive](https://flydrive.dev/)** - Unified file storage library
+- **[OpenAPI Metadata](https://github.com/sedlatschek/openapi-metadata)** - TypeScript decorators for OpenAPI documentation
 
 ## 📋 Prerequisites
 
@@ -191,6 +192,91 @@ bun run build:prod
 ```
 Compiles the server into a standalone executable with all dependencies bundled.
 
+## 📖 API Documentation
+
+This project includes automatic OpenAPI documentation generation using decorators.
+
+### Accessing API Documentation
+
+Once the development server is running, you can access:
+
+- **Interactive API Documentation (Scalar UI)**: `http://localhost:3000/docs`
+- **OpenAPI Specification (JSON)**: `http://localhost:3000/openapi.json`
+
+The Scalar UI provides a beautiful, interactive interface to explore and test your API endpoints directly in the browser.
+
+### Documenting API Endpoints
+
+API endpoints are documented using TypeScript decorators from `openapi-metadata`:
+
+```typescript
+import { Service } from "typedi"
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from "openapi-metadata/decorators"
+import { myValidator } from "./my.validator"
+import MyModel from "./my.model"
+
+@Service()
+@ApiTags("MyModule")
+export default class MyController {
+  @ApiOperation({
+    methods: ["post"],
+    path: "/api/my-endpoint",
+    summary: "Create a new resource"
+  })
+  @ApiBody({
+    type: () => myValidator,
+    mediaType: "application/json"  // or "multipart/form-data"
+  })
+  @ApiResponse({ type: MyModel, status: 201 })
+  async create({ req }: Context) {
+    const payload = await req.validate(myValidator)
+    return await this.service.create(payload)
+  }
+}
+```
+
+### Available Decorators
+
+- **@ApiTags(tag)** - Group endpoints by tag/category
+- **@ApiOperation(config)** - Define HTTP method, path, and summary
+  - `methods`: HTTP methods (e.g., `["get"]`, `["post"]`)
+  - `path`: Endpoint path (e.g., `/api/users`)
+  - `summary`: Brief description of the endpoint
+- **@ApiBody(config)** - Define request body schema
+  - `type`: Validator or model class
+  - `mediaType`: Content type (e.g., `"application/json"`, `"multipart/form-data"`)
+- **@ApiResponse(config)** - Define response schema
+  - `type`: Response model or array of models (e.g., `User`, `[User]`)
+  - `status`: HTTP status code (default: 200)
+
+### Custom Type Loaders
+
+The project includes custom type loaders for framework-specific types:
+
+- **VineTypeLoader** (`utils/openapi/loaders/vine.ts`) - Converts Vine validators to OpenAPI schemas
+- **LuxonTypeLoader** (`utils/openapi/loaders/luxon.ts`) - Handles Luxon DateTime types
+
+These loaders are configured in `config/openapi.ts` to automatically generate accurate OpenAPI schemas from your validators and models.
+
+### Configuration
+
+OpenAPI configuration is located in [config/openapi.ts](config/openapi.ts):
+
+```typescript
+export default {
+  controllers: [WebController, UserController],
+  loaders: [LuxonTypeLoader, VineTypeLoader],
+  document: {
+    info: {
+      title: description,
+      version,
+    },
+  },
+}
+```
+
+Add your controllers to the `controllers` array to include them in the API documentation.
+
 ## 📁 Project Structure
 
 ```
@@ -211,12 +297,14 @@ bun-starter-kit/
 │   └── error-handler.ts     # Global error handler
 ├── config/
 │   ├── database.ts          # Lucid database configuration
-│   └── drive.ts             # Flydrive storage configuration
+│   ├── drive.ts             # Flydrive storage configuration
+│   └── openapi.ts           # OpenAPI documentation configuration
 ├── migrations/              # Knex migration files
 │   └── 20251220144756_init.ts
 ├── storage/                 # File storage directory (fs driver)
 ├── routes/                  # Route definitions
 │   ├── api.ts
+│   ├── openapi.ts           # OpenAPI JSON endpoint
 │   └── web.ts
 ├── types/                   # TypeScript type definitions
 │   ├── env.d.ts
@@ -226,6 +314,11 @@ bun-starter-kit/
 │   ├── index.ts
 │   ├── lucid.ts
 │   ├── migration.ts        # Migration runner
+│   ├── openapi/            # OpenAPI utilities
+│   │   ├── loaders/
+│   │   │   ├── luxon.ts    # Luxon DateTime type loader
+│   │   │   └── vine.ts     # Vine validator type loader
+│   │   └── utils.ts
 │   └── sentry.ts
 ├── views/                   # JSX/TSX views
 │   ├── components/
@@ -287,8 +380,10 @@ File storage is configured in [config/drive.ts](config/drive.ts) using the `DRIV
 - ✅ **Validation** - Vine Validator for request validation
 - ✅ **Dependency Injection** - Typedi for automatic DI
 - ✅ **File Storage** - Flydrive for unified file storage
+- ✅ **API Documentation** - Automatic OpenAPI specification generation
 - ✅ **Error Tracking** - Sentry integration
 - ✅ **Code Quality** - Biome for formatting and linting
+- ✅ **Testing** - Comprehensive test setup with Bun test
 
 ## 🚀 Getting Started
 
@@ -307,6 +402,7 @@ File storage is configured in [config/drive.ts](config/drive.ts) using the `DRIV
 - [Vine Validator Documentation](https://vinejs.dev/)
 - [Typedi Documentation](https://github.com/typestack/typedi)
 - [Flydrive Documentation](https://flydrive.dev/)
+- [OpenAPI Metadata Documentation](https://github.com/sedlatschek/openapi-metadata)
 
 ## 📄 License
 

@@ -105,6 +105,48 @@ Modules follow a consistent pattern in `app/modules/{module}/`:
 - `{module}.service.ts` - Business logic with `@Service()` decorator
 - `{module}.validator.ts` - Vine validation schemas
 
+### OpenAPI Documentation
+
+**Automatic API Documentation**:
+- OpenAPI specification generated from TypeScript decorators using `openapi-metadata`
+- Interactive documentation UI (Scalar) available at `/docs` endpoint
+- Raw OpenAPI specification available at `/openapi.json` endpoint
+- Configuration in `config/openapi.ts` specifies controllers and custom type loaders
+
+**Decorators for Documentation**:
+- `@ApiTags(tag)` - Group endpoints by category
+- `@ApiOperation(config)` - Define HTTP method, path, and summary
+- `@ApiBody(config)` - Define request body schema
+- `@ApiResponse(config)` - Define response schema
+
+**Custom Type Loaders** (`utils/openapi/loaders/`):
+- `VineTypeLoader` - Converts Vine validators to OpenAPI schemas
+- `LuxonTypeLoader` - Handles Luxon DateTime types in models
+
+Controllers must be registered in `config/openapi.ts` to appear in documentation.
+
+Example:
+```typescript
+@Service()
+@ApiTags("Users")
+export default class UserController {
+  @ApiOperation({
+    methods: ["post"],
+    path: "/api/users",
+    summary: "Create a new user"
+  })
+  @ApiBody({
+    type: () => userCreateValidator,
+    mediaType: "multipart/form-data"
+  })
+  @ApiResponse({ type: User, status: 201 })
+  async createUser({ req }: Context) {
+    const payload = await req.validate(userCreateValidator)
+    return await this.service.createUser(payload)
+  }
+}
+```
+
 ### Error Handling
 
 Global error handler in `app/error-handler.ts`:
@@ -121,10 +163,26 @@ Global error handler in `app/error-handler.ts`:
 3. Create validator using `@vinejs/vine`
 4. Create service decorated with `@Service()`
 5. Create controller decorated with `@Service()`, inject service via constructor
-6. Wire up routes in `routes/api.ts` using `Controller()` helper:
+6. Add OpenAPI decorators to controller methods:
+   ```typescript
+   @Service()
+   @ApiTags("ModuleName")
+   export default class MyController {
+     @ApiOperation({
+       methods: ["post"],
+       path: "/api/path",
+       summary: "Description"
+     })
+     @ApiBody({ type: () => myValidator, mediaType: "application/json" })
+     @ApiResponse({ type: MyModel, status: 201 })
+     async methodName({ req }: Context) { ... }
+   }
+   ```
+7. Wire up routes in `routes/api.ts` using `Controller()` helper:
    ```typescript
    route.post("/path", Controller(MyController, "methodName"))
    ```
+8. Register controller in `config/openapi.ts` controllers array
 
 ### Working with Models
 

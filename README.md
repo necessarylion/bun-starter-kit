@@ -11,7 +11,7 @@ A modern, type-safe web application starter kit built with **Hono**, **Bun**, **
 - **[Vine Validator](https://vinejs.dev/)** - Schema-based validation library
 - **[Typedi](https://github.com/typestack/typedi)** - Dependency injection container
 - **[Flydrive](https://flydrive.dev/)** - Unified file storage library
-- **[OpenAPI Metadata](https://github.com/sedlatschek/openapi-metadata)** - TypeScript decorators for OpenAPI documentation
+- **[OpenAPI Metadata](https://openapi-ts.dev/openapi-metadata/)** - TypeScript decorators for OpenAPI documentation
 
 ## 📋 Prerequisites
 
@@ -402,7 +402,7 @@ File storage is configured in [config/drive.ts](config/drive.ts) using the `DRIV
 - [Vine Validator Documentation](https://vinejs.dev/)
 - [Typedi Documentation](https://github.com/typestack/typedi)
 - [Flydrive Documentation](https://flydrive.dev/)
-- [OpenAPI Metadata Documentation](https://github.com/sedlatschek/openapi-metadata)
+- [OpenAPI Metadata Documentation](https://openapi-ts.dev/openapi-metadata/)
 
 ## 📄 License
 

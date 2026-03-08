@@ -10,6 +10,12 @@ export const userCreateValidator = vine.create(
 			.minLength(8)
 			.maxLength(32)
 			.confirmed(),
+		password_confirmation: vine
+			.string()
+			.example("password123")
+			.minLength(8)
+			.maxLength(32)
+			.optional(),
 		avatar: vine.nativeFile().mimeTypes(["image/jpeg", "image/png"]),
 	}),
 )
